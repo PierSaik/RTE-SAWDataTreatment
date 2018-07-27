@@ -46,9 +46,9 @@ def SensSort(Sensx_DataRaw):
 
 def main():
 
-	Sens0_DataRaw = [0,0,0,0,0]
-	Sens1_DataRaw = [0,0,0,0,0]
-	Sens2_DataRaw = [0,0,0,0,0]
+	#Sens0_DataRaw = [0,0,0,0,0]
+	#Sens1_DataRaw = [0,0,0,0,0]
+	#Sens2_DataRaw = [0,0,0,0,0]
 	i = 0
 	Sens0_DataRaw_np = np.zeros(shape=(0,2))
 	Sens1_DataRaw_np = np.zeros(shape=(0,2))
@@ -63,25 +63,34 @@ def main():
 			if not row[0].startswith('#'): # skip comments
 				if row[3] == '0':
 					print('yeah0')
-					Sens0_DataRaw_np = np.vstack((Sens0_DataRaw_np, [np.datetime64(datetime.strptime(row[1], "%d/%m/%Y %H:%M:%S")), float(row[4])]))
+					Sens0_DataRaw_np = np.vstack((Sens0_DataRaw_np, [float(row[0]), float(row[4])]))
 				if row[3] == '1':
 					print('yeah1')
-					Sens1_DataRaw_np = np.vstack((Sens1_DataRaw_np, [np.datetime64(datetime.strptime(row[1], "%d/%m/%Y %H:%M:%S")), float(row[4])]))
+					Sens1_DataRaw_np = np.vstack((Sens1_DataRaw_np, [float(row[0]), float(row[4])]))
+					#Sens1_DataRaw_np = np.vstack((Sens1_DataRaw_np, [np.datetime64(datetime.strptime(row[1], "%d/%m/%Y %H:%M:%S")), float(row[4])]))
 				if row[3] == '2':
 					print('yeah2')
-					Sens2_DataRaw_np = np.vstack((Sens2_DataRaw_np, [np.datetime64(datetime.strptime(row[1], "%d/%m/%Y %H:%M:%S")), float(row[4])]))
+					Sens2_DataRaw_np = np.vstack((Sens2_DataRaw_np, [float(row[0]), float(row[4])]))
+					#Sens2_DataRaw_np = np.vstack((Sens2_DataRaw_np, [np.datetime64(datetime.strptime(row[1], "%d/%m/%Y %H:%M:%S")), float(row[4])]))
 	#print(Sens0_DataRaw)
 	#print(Sens1_DataRaw)
 	#print(Sens2_DataRaw)
-	print(Sens0_DataRaw_np[0,0])
-	date_start = np.datetime64(Sens0_DataRaw_np[0,0],'D')
-	date_end   = np.datetime64(Sens0_DataRaw_np[end,0],'D') + np.timedelta64(1,'D')
-	date_cond  = date_start
+	#print(Sens0_DataRaw_np[0,0])
+	#date_start = np.datetime64(Sens0_DataRaw_np[0,0],'D')
+	#date_end   = np.datetime64(Sens0_DataRaw_np[1000,0],'D') + np.timedelta64(1,'D')
+	#date_cond  = np.datetime64(date_start, 'D')
+
+#depuis le timestamp 
+#a division euclidienne d'un jour
+#puis enlever les seondes
+
 	while date_cond < date_end:
-		date_cond1 = date_cond + np.timedelta64(10,'s')
-		B = np.where(date_cond1>Sens0_DataRaw_np[:,0]>date_cond,1,0)
-		MOY = Sens0_DataRaw_np[:,1] * np.transpose(B)
-		print(MOY)
+		for i in range(0,len(Sens0_DataRaw_np)):
+			n = 0
+			if 10>(Sens0_DataRaw_np[i,0] - date_cond):
+				MOY = MOY + Sens0_DataRaw_np[i,0]
+				n = n + 1
+		print(MOY/n)
 		date_cond = date_cond + np.timedelta64(10 ,'s')
 
 		
