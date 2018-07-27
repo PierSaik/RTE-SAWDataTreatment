@@ -19,6 +19,7 @@ import glob
 import csv
 import numpy as np
 import math
+import argparse
 
 # Import Python visualisation dependencies :
 # -----------------------------------------
@@ -72,12 +73,20 @@ def SensSort(csvfile):
 
 	return Sens0_DataRaw_np, Sens1_DataRaw_np, Sens2_DataRaw_np				
 
-def main():
+def main(time_parameter):
+
+
+
+
+
 
 	i = 0
 	Sens0_np = np.zeros(shape=(0,2))
 	Sens1_np = np.zeros(shape=(0,2))
 	Sens2_np = np.zeros(shape=(0,2))
+
+
+
 	
 	for file_csv in glob.glob('*.csv'):
 		[Sens0_out, Sens1_out, Sens2_out] = SensSort(file_csv)
@@ -86,8 +95,9 @@ def main():
 		Sens2_np = np.vstack((Sens2_np, Sens2_out))
 	print(Sens0_np)
 
+
+
 	day = 86400
-	time_parameter  = 600
 	Sens0_DataAvg_np = np.zeros(shape=(0,2))
 	date_start = (Sens0_np[0,0] // day) * day
 	date_end   = (Sens0_np[len(Sens0_np)-1,0] // day + 1) *day
@@ -115,6 +125,13 @@ def main():
 	plt.show()
 
 if __name__ == '__main__': 
-	main()
+	
+	parser = argparse.ArgumentParser(description='Compute and plot SENSeOR SAW sensor data and averages it on demand. To run the program, you have to be where the .csv of SENSeOR are located')
+	parser.add_argument('-t','--time_parameter', help='select time parameter',
+			 required=True)
+	args = parser.parse_args()
+
+	main(int(args.time_parameter))
+
 
 
