@@ -25,17 +25,36 @@ import argparse
 # -----------------------------------------
 import matplotlib.pyplot as plt
 
-def AvgXSeconds(Sensx_Data, seconds_add):
+def AvgXSeconds(Sensx_Data, time_parameter):
 	"""
 		Make an average on SenseorData for every point inbetween steps
 		Input :
-			- SensData : Senseor data define as (timestamp, temperature)
+			- Sensx_Data : Senseor data define as (timestamp, temperature)
 		Output :
-			- SensDataAvg : Senseor data averaged
+			- Sens_DataAvg_np : Senseor data averaged
 		Used in : Main
 	"""
+	# Local Variables :
+	# -----------------
+	day = 86400
+	Sens_DataAvg_np = np.zeros(shape=(0,2))
+	date_start = (Sensx_Data[0,0] // day) * day
+	date_end   = ((Sensx_Data[len(Sensx_Data)-1,0] // day + 1)) * day
+	date_cond  = date_start
+	# print("date_cond = ", date_cond)
+	# print("premiere_date = ", (Sensx_Data[0,0])
+	# print((Sensx_Data[0,0] - date_cond)
+
+	while date_cond < date_end:
+		temp_values = np.where(Sensx_Data[:,0]//time_parameter == date_cond//time_parameter ) 
+		#print(temp_values)
+		temp_avg    = np.average(Sensx_Data[temp_values,1])
+		#print(temp_avg)
+		if temp_avg == temp_avg:
+			Sens_DataAvg_np = np.vstack((Sens_DataAvg_np, [date_cond,temp_avg]))
+		date_cond  += time_parameter
 	
-	
+	return Sens_DataAvg_np
 
 def SensSort(csvfile):
 	"""
@@ -74,20 +93,18 @@ def SensSort(csvfile):
 	return Sens0_DataRaw_np, Sens1_DataRaw_np, Sens2_DataRaw_np				
 
 def main(time_parameter):
-
-
-
-
-
-
+	# Local variables :
+	# -----------------
 	i = 0
 	Sens0_np = np.zeros(shape=(0,2))
 	Sens1_np = np.zeros(shape=(0,2))
 	Sens2_np = np.zeros(shape=(0,2))
+	Sens0_DataAvg_np = np.zeros(shape=(0,2))
+	Sens1_DataAvg_np = np.zeros(shape=(0,2))
+	Sens2_DataAvg_np = np.zeros(shape=(0,2))
 
-
-
-	
+	# Extracting SENSeOR Data from CSV file :
+	# ---------------------------------------
 	for file_csv in glob.glob('*.csv'):
 		[Sens0_out, Sens1_out, Sens2_out] = SensSort(file_csv)
 		Sens0_np = np.vstack((Sens0_np, Sens0_out))
@@ -95,27 +112,9 @@ def main(time_parameter):
 		Sens2_np = np.vstack((Sens2_np, Sens2_out))
 	print(Sens0_np)
 
-
-
-	day = 86400
-	Sens0_DataAvg_np = np.zeros(shape=(0,2))
-	date_start = (Sens0_np[0,0] // day) * day
-	date_end   = (Sens0_np[len(Sens0_np)-1,0] // day + 1) *day
-	date_cond  = date_start
-	print("date_cond = ", date_cond)
-	print("premiere_date = ", Sens0_np[0,0])
-	print(Sens0_np[0,0] - date_cond)
-
-
-	while date_cond < date_end:
-		temp_values = np.where(Sens0_np[:,0]//time_parameter == date_cond//time_parameter ) 
-		#print(temp_values)
-		temp_avg    = np.average(Sens0_np[temp_values,1])
-		#print(temp_avg)
-		if temp_avg == temp_avg:
-			Sens0_DataAvg_np = np.vstack((Sens0_DataAvg_np, [date_cond,temp_avg]))
-		date_cond  += time_parameter
-
+	# Averaging SENSeOR Data according to timestamp :
+	# -----------------------------------------------
+	Sens0_DataAvg_np = AvgXSeconds(Sens0_np, time_parameter)
 
 	Datets = []
 	for i in range(0,len(Sens0_DataAvg_np)):
